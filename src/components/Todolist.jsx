@@ -11,7 +11,7 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { v4 as uuidv4 } from "uuid";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { TodosContext } from "../contexts/TodosContext";
 import Todo from "./Todo";
 
@@ -20,6 +20,10 @@ export default function Todolist() {
   const { todos, settodos } = useContext(TodosContext);
   const [alignment, setAlignment] = useState("all");
 
+  useEffect(() => {
+    const localtodos = JSON.parse(localStorage.getItem("todos"));
+    if (localtodos) settodos(localtodos);
+  }, []);
   function handleaddclick() {
     if (titleinput === "") return alert("من فضلك ادخل عنوان المهمة");
     const newtodo = {
@@ -28,16 +32,18 @@ export default function Todolist() {
       details: "",
       completed: false,
     };
-    settodos([...todos, newtodo]);
+    const updatedtodos = [...todos, newtodo];
+    settodos(updatedtodos);
+    localStorage.setItem("todos", JSON.stringify(updatedtodos));
     settitleinput("");
   }
 
   const todolist = todos.map((todo) => {
-    if (alignment === "all") return <Todo key={todo.id} id={todo.id} />;
+    if (alignment === "all") return <Todo key={todo.id} todo={todo} />;
     if (alignment === "done" && todo.completed)
-      return <Todo key={todo.id} id={todo.id} />;
+      return <Todo key={todo.id} todo={todo} />;
     if (alignment === "undone" && !todo.completed)
-      return <Todo key={todo.id} id={todo.id} />;
+      return <Todo key={todo.id} todo={todo} />;
   });
 
   function handleAlignment(value, newaligment) {

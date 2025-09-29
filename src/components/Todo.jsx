@@ -19,13 +19,15 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { TodosContext } from "../contexts/TodosContext";
 import { Key } from "@mui/icons-material";
 
-export default function Todo({ id }) {
+export default function Todo({ todo }) {
   const [showDeleteDialog, setshowDeleteDialog] = useState(false);
   const [showEditDialog, setshowEditDialog] = useState(false);
-  const [edittodo, setedittodo] = useState({});
+  const [edittodo, setedittodo] = useState({
+    title: todo.title,
+    details: todo.details,
+  });
   const { todos, settodos } = useContext(TodosContext);
 
-  const todo = todos.find((todo) => todo.id == id);
   function handlecheckclick(id) {
     settodos(
       todos.map((todo) => {
@@ -35,10 +37,13 @@ export default function Todo({ id }) {
         return todo;
       })
     );
+    localStorage.setItem("todos", JSON.stringify(todos));
   }
 
   function handleagreedelete(id) {
     settodos(todos.filter((todo) => todo.id !== id));
+    const updatedtodos = todos.filter((todo) => todo.id !== id);
+    localStorage.setItem("todos", JSON.stringify(updatedtodos));
   }
   // delete dialog
   function handledeleteclick() {
@@ -61,11 +66,12 @@ export default function Todo({ id }) {
   function handlesave() {
     if (edittodo.title === "") return alert("من فضلك ادخل عنوان المهمة");
     const edittodos = todos.map((t) => {
-      if (t.id === id) {
+      if (t.id === todo.id) {
         return { ...t, title: edittodo.title, details: edittodo.details };
       } else return t;
     });
     settodos(edittodos);
+    localStorage.setItem("todos", JSON.stringify(edittodos));
     closeEditDialog();
   }
   // edit dialog
