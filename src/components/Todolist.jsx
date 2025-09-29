@@ -53,7 +53,7 @@ export default function Todolist() {
   return (
     <Container maxWidth="sm">
       <Card sx={{ minWidth: 275 }}>
-        <CardContent className="place-items-center flex flex-col items-center">
+        <CardContent className="place-items-center flex flex-col items-center overflow-y-auto h-[85vh] ">
           <Typography variant="h3">مهامي</Typography>
           <Divider className=" w-full" />
           {/* filter buttns */}
