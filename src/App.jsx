@@ -31,6 +31,7 @@ const maintodos = [
     completed: false,
   },
 ];
+
 function App() {
   const [todos, settodos] = useState(maintodos);
   return (
