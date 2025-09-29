@@ -1,0 +1,27 @@
+@import "tailwindcss";
+/* ===========custom fonts============ */
+@font-face {
+  font-family: Alexandria;
+  src: url(../public/fonts/Alexandria-Black.ttf);
+  font-weight: 900;
+}
+@font-face {
+  font-family: Alexandria;
+  src: url(../public/fonts/Alexandria-Bold.ttf);
+  font-weight: 700;
+}
+@font-face {
+  font-family: Alexandria;
+  src: url(../public/fonts/Alexandria-Regular.ttf);
+  font-weight: 400;
+}
+@font-face {
+  font-family: Alexandria;
+  src: url(../public/fonts/Alexandria-Thin.ttf);
+  font-weight: 100;
+}
+/* =========== // custom fonts // ============ */
+
+body {
+  font-family: Alexandria !important;
+}
