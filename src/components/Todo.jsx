@@ -168,13 +168,19 @@ export default function Todo({ todo }) {
             }}
           >
             <Grid size={{ xs: 6, md: 8 }}>
-              <Typography variant="h5" textAlign={"right"}>
+              <Typography
+                variant="h5"
+                textAlign={"right"}
+                className={todo.completed ? "line-through" : ""}
+              >
                 {todo.title}
               </Typography>
               <Typography
                 variant="h6"
                 textAlign={"right"}
-                className="text-gray-300! text-sm! mt-2!"
+                className={`text-gray-300! text-sm! mt-2! ${
+                  todo.completed ? "line-through" : ""
+                }`}
                 style={{ fontWeight: "400" }}
               >
                 {todo.details}
