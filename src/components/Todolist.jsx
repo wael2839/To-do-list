@@ -11,7 +11,7 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { v4 as uuidv4 } from "uuid";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useMemo } from "react";
 import { TodosContext } from "../contexts/TodosContext";
 import Todo from "./Todo";
 
@@ -38,14 +38,33 @@ export default function Todolist() {
     settitleinput("");
   }
 
-  const todolist = todos.map((todo) => {
-    if (alignment === "all") return <Todo key={todo.id} todo={todo} />;
-    if (alignment === "done" && todo.completed)
-      return <Todo key={todo.id} todo={todo} />;
-    if (alignment === "undone" && !todo.completed)
-      return <Todo key={todo.id} todo={todo} />;
-  });
+  const completedTodoReady = useMemo(() => {
+    console.log("done");
+    return todos.filter((t) => {
+      return t.completed;
+    });
+  }, [todos]);
 
+  const nocompletedTodoReady = useMemo(() => {
+    console.log("undone");
+    return todos.filter((t) => {
+      return !t.completed;
+    });
+  }, [todos]);
+
+  let todosReady = todos;
+
+  if (alignment === "done") {
+    todosReady = completedTodoReady;
+  } else if (alignment === "undone") {
+    todosReady = nocompletedTodoReady;
+  } else {
+    todosReady = todos;
+  }
+
+  const todosToBeRenders = todosReady.map((t) => {
+    return <Todo key={t.id} todo={t} />;
+  });
   function handleAlignment(value, newaligment) {
     setAlignment(newaligment);
   }
@@ -53,7 +72,7 @@ export default function Todolist() {
   return (
     <Container maxWidth="sm">
       <Card sx={{ minWidth: 275 }}>
-        <CardContent className="place-items-center flex flex-col items-center overflow-y-auto h-auto max-h-[80vh]">
+        <CardContent className="place-items-center flex flex-col items-center overflow-y-auto h-auto max-h-[80vhnpm]">
           <Typography variant="h3">مهامي</Typography>
           <Divider className=" w-full" />
           {/* filter buttns */}
@@ -70,7 +89,7 @@ export default function Todolist() {
           </ToggleButtonGroup>
           {/* filter buttns */}
           {/* all todos */}
-          <div className="gap-5 flex flex-col w-full">{todolist}</div>
+          <div className="gap-5 flex flex-col w-full">{todosToBeRenders}</div>
           <Grid
             container
             spacing={2}
