@@ -10,9 +10,8 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { useState, useEffect, useMemo } from "react";
-import { TodosContext, useTodos } from "../contexts/TodosContext";
+import { useTodos } from "../contexts/TodosContext";
 import { useToast } from "../contexts/ToastContext";
-// import todosReducer from "../reducers/todosReducer";
 import Todo from "./Todo";
 
 // dialog
@@ -33,7 +32,6 @@ export default function Todolist() {
   const { todos, dispatch } = useTodos();
   console.log(todos);
   const [alignment, setAlignment] = useState("all");
-
   const { showhidetoast } = useToast();
 
   useEffect(() => {

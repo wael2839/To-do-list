@@ -1,7 +1,6 @@
 import "./App.css";
 import Todolist from "./components/Todolist";
 import { createTheme, ThemeProvider } from "@mui/material";
-import { TodosContext } from "./contexts/TodosContext";
 import { ToastProvider } from "./contexts/ToastContext";
 import TodosProvider from "./contexts/TodosContext";
 
