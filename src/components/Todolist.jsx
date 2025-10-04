@@ -1,7 +1,6 @@
 import * as React from "react";
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -10,10 +9,10 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import { v4 as uuidv4 } from "uuid";
-import { useState, useContext, useEffect, useMemo } from "react";
-import { TodosContext } from "../contexts/TodosContext";
-import { ToastContext } from "../contexts/ToastContext";
+import { useState, useEffect, useMemo } from "react";
+import { TodosContext, useTodos } from "../contexts/TodosContext";
+import { useToast } from "../contexts/ToastContext";
+// import todosReducer from "../reducers/todosReducer";
 import Todo from "./Todo";
 
 // dialog
@@ -31,28 +30,30 @@ export default function Todolist() {
   const [edittodo, setedittodo] = useState({});
   const [idtodelete, setidtodelete] = useState(0);
 
-  const { todos, settodos } = useContext(TodosContext);
+  const { todos, dispatch } = useTodos();
+  console.log(todos);
   const [alignment, setAlignment] = useState("all");
 
-  const { showhidetoast } = useContext(ToastContext);
+  const { showhidetoast } = useToast();
 
   useEffect(() => {
-    const localtodos = JSON.parse(localStorage.getItem("todos"));
-    if (localtodos) settodos(localtodos);
+    dispatch({
+      type: "git",
+    });
   }, []);
   function handleaddclick() {
-    if (titleinput === "") return alert("من فضلك ادخل عنوان المهمة");
-    const newtodo = {
-      id: uuidv4(),
-      title: titleinput,
-      details: "",
-      completed: false,
-    };
-    const updatedtodos = [...todos, newtodo];
-    settodos(updatedtodos);
-    localStorage.setItem("todos", JSON.stringify(updatedtodos));
-    settitleinput("");
-    showhidetoast("تم اضافة المهمة بنجاح");
+    if (titleinput === "") {
+      showhidetoast("قم بكتابة اسم المهمة ");
+    } else {
+      dispatch({
+        type: "ADD",
+        payload: {
+          title: titleinput,
+        },
+      });
+      settitleinput("");
+      showhidetoast("تم اضافة المهمة بنجاح");
+    }
   }
 
   const completedTodoReady = useMemo(() => {
@@ -97,9 +98,12 @@ export default function Todolist() {
   // delete dialog
 
   function handleagreedelete(idtodelete) {
-    settodos(todos.filter((todo) => todo.id !== idtodelete));
-    const updatedtodos = todos.filter((todo) => todo.id !== idtodelete);
-    localStorage.setItem("todos", JSON.stringify(updatedtodos));
+    dispatch({
+      type: "Delete",
+      payload: {
+        id: idtodelete,
+      },
+    });
     closeDeleteDialog();
     showhidetoast("تم حذف المهمة بنجاح");
   }
@@ -121,38 +125,36 @@ export default function Todolist() {
     });
     setshowEditDialog(true);
   }
-
-  function closeEditDialog() {
-    setshowEditDialog(false);
-  }
-
   function handlesave() {
-    if (edittodo.title === "") return alert("من فضلك ادخل عنوان المهمة");
-    const edittodos = todos.map((t) => {
-      if (t.id === edittodo.id) {
-        return { ...t, title: edittodo.title, details: edittodo.details };
-      } else return t;
+    dispatch({
+      type: "Edit",
+      payload: {
+        id: edittodo.id,
+        title: edittodo.title,
+        details: edittodo.details,
+      },
     });
-    settodos(edittodos);
-    localStorage.setItem("todos", JSON.stringify(edittodos));
     closeEditDialog();
     showhidetoast("تم تعديل المهمة بنجاح");
+  }
+  function closeEditDialog() {
+    setshowEditDialog(false);
   }
   // edit dialog
   // check handler
   function handlecheckclick(id) {
-    settodos(
-      todos.map((todo) => {
-        if (todo.id == id) {
-          todo.completed = !todo.completed;
-          showhidetoast(
-            `تم ${todo.completed ? "انجاز" : "الغاء انجاز"} المهمة `
-          );
-        }
-        return todo;
-      })
-    );
-    localStorage.setItem("todos", JSON.stringify(todos));
+    dispatch({
+      type: "Check",
+      payload: {
+        id: id,
+      },
+    });
+    const complet = todos.find((todo) => {
+      if (todo.id === id) {
+        return !todo.completed;
+      }
+    });
+    showhidetoast(`تم ${complet ? "انجاز" : "الغاء انجاز"} المهمة بنجاح`);
   }
   // check handler
 
